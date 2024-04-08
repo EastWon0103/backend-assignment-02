@@ -25,17 +25,26 @@ public class EncryptionUtil {
         return key.getEncoded();
     }
 
-    public static byte[] encrypt(String plainText) throws Exception {
-        SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY, "AES");
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        return cipher.doFinal(plainText.getBytes());
+    public static byte[] encrypt(String plainText) {
+        try {
+            SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            return cipher.doFinal(plainText.getBytes());
+        } catch (Exception e) {
+            throw new RuntimeException("암호화 과정 중 문제가 생겼습니다.");
+        }
+
     }
 
-    public static String decrypt(byte[] cipherText) throws Exception {
-        SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY, "AES");
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        return new String(cipher.doFinal(cipherText));
+    public static String decrypt(byte[] cipherText) {
+        try {
+            SecretKeySpec secretKey = new SecretKeySpec(SECRET_KEY, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            return new String(cipher.doFinal(cipherText));
+        } catch (Exception e) {
+            throw new RuntimeException("복호화 과정 중 문제가 생겼습니다.");
+        }
     }
 }

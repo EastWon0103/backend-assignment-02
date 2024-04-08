@@ -48,8 +48,10 @@ public class Controller {
                     default:
                         System.out.println("0~4까지만 입력 가능합니다.");
                 }
-            } catch (Exception e) {
+            } catch (NumberFormatException | IOException e) {
                 System.out.println("입력이 올바르지 않습니다.");
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
             }
             System.out.print("\n\n");
         }

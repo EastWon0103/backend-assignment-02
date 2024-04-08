@@ -58,14 +58,8 @@ public class MemberServiceImpl implements MemberService {
             .append(String.format("아이디: %s\n", id))
             .append(String.format("닉네임: %s\n", member.getNickname()));
 
-        try {
-            return new LoginResponse(sb, Optional.of(encryptionUtil.encrypt(id)));
-        } catch (Exception e) {
-            sb.setLength(0);
-            sb.append("암호화에 실패하였습니다. \n");
-            e.printStackTrace();
-            return new LoginResponse(sb, Optional.empty());
-        }
+
+        return new LoginResponse(sb, Optional.of(encryptionUtil.encrypt(id)));
     }
 
     @Override
@@ -76,21 +70,15 @@ public class MemberServiceImpl implements MemberService {
             return sb;
         }
 
-        try {
-            String id = encryptionUtil.decrypt(authenticate.get());
-            Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("유자기 존재하지 않음"));
-            member.setNickname(nickname);
+        String id = encryptionUtil.decrypt(authenticate.get());
+        Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("유자기 존재하지 않음"));
+        member.setNickname(nickname);
 
-            memberRepository.save(member);
-            sb.append("닉네임이 업데이트가 되었습니다.\n")
-                .append(String.format("아이디: %s\n", id))
-                .append(String.format("닉네임: %s\n", member.getNickname()));;
-            return sb;
-        } catch (Exception e) {
-            sb.setLength(0);
-            sb.append("탈퇴 과정에서 알 수 없는 에러가 발생했습니다.\n");
-            return sb;
-        }
+        memberRepository.save(member);
+        sb.append("닉네임이 업데이트가 되었습니다.\n")
+            .append(String.format("아이디: %s\n", id))
+            .append(String.format("닉네임: %s\n", member.getNickname()));;
+        return sb;
     }
 
     @Override
@@ -101,16 +89,11 @@ public class MemberServiceImpl implements MemberService {
             return new LogoutResponse(false, sb);
         }
 
-        try {
-            String id = encryptionUtil.decrypt(authenticate.get());
-            memberRepository.delete(id);
-            sb.append("탈퇴 완료했습니다.\n");
-            return new LogoutResponse(true, sb);
-        } catch (Exception e) {
-            sb.append("탈퇴 과정에서 알 수 없는 에러가 발생했습니다.\n");
-            e.printStackTrace();
-            return new LogoutResponse(false, sb);
-        }
+
+        String id = encryptionUtil.decrypt(authenticate.get());
+        memberRepository.delete(id);
+        sb.append("탈퇴 완료했습니다.\n");
+        return new LogoutResponse(true, sb);
     }
 
     public boolean isValidId(String id) {
